@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control Cacao - FUMISA</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ===== PANTALLA DE LOGIN ===== -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <i class="fa-solid fa-seedling"></i>
+        <h1>FUMISA</h1>
+        <p>Control de Cacao 2026</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label><i class="fa-solid fa-user"></i> Usuario</label>
+          <input type="text" id="login-user" placeholder="Ingrese su usuario" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label><i class="fa-solid fa-lock"></i> Contraseña</label>
+          <input type="password" id="login-pass" placeholder="Ingrese su contraseña" autocomplete="current-password" />
+        </div>
+        <div id="login-error" class="login-error hidden">
+          <i class="fa-solid fa-triangle-exclamation"></i> Usuario o contraseña incorrectos
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <i class="fa-solid fa-right-to-bracket"></i> Ingresar
+        </button>
+      </form>
+      <p class="login-version">v1.0 — Sistema de Control de Cacao</p>
+    </div>
+  </div>
+
+  <!-- ===== APLICACIÓN PRINCIPAL ===== -->
+  <div id="app" class="app hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-seedling"></i>
+        <span class="sidebar-title">FUMISA</span>
+        <button id="sidebar-toggle" class="sidebar-toggle" title="Colapsar">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">PRINCIPAL</div>
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <div class="nav-section-label">OPERACIONES</div>
+        <a href="#" class="nav-item" data-page="compras">
+          <i class="fa-solid fa-cart-plus"></i>
+          <span>Compras</span>
+        </a>
+        <a href="#" class="nav-item" data-page="lotes">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>Lotes</span>
+        </a>
+        <a href="#" class="nav-item" data-page="inventario">
+          <i class="fa-solid fa-warehouse"></i>
+          <span>Inventario</span>
+        </a>
+
+        <div class="nav-section-label">GESTIÓN</div>
+        <a href="#" class="nav-item" data-page="proveedores">
+          <i class="fa-solid fa-people-group"></i>
+          <span>Proveedores</span>
+        </a>
+        <a href="#" class="nav-item" data-page="reportes">
+          <i class="fa-solid fa-chart-bar"></i>
+          <span>Reportes</span>
+        </a>
+        <a href="#" class="nav-item" data-page="importar">
+          <i class="fa-solid fa-file-import"></i>
+          <span>Importar Excel</span>
+        </a>
+
+        <div class="nav-section-label nav-admin-section" data-rol="admin">ADMINISTRACIÓN</div>
+        <a href="#" class="nav-item nav-admin-item" data-page="usuarios" data-rol="admin">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>Usuarios</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">A</div>
+          <div class="user-details">
+            <span id="user-name-sidebar">Usuario</span>
+            <span id="user-rol-sidebar" class="user-rol">Rol</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="logout-btn" title="Cerrar sesión">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="mobile-menu-btn" class="mobile-menu-btn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h2 id="page-title">Dashboard</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="current-date"></span>
+          </div>
+          <div class="topbar-user">
+            <div class="user-avatar-sm" id="topbar-avatar">A</div>
+            <span id="topbar-username">Usuario</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- PÁGINAS -->
+      <div class="page-container">
+
+        <!-- ====== DASHBOARD ====== -->
+        <div id="page-dashboard" class="page active">
+          <div class="stats-grid">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon"><i class="fa-solid fa-cart-plus"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-compras-hoy">0</h3>
+                <p>Compras Hoy</p>
+              </div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon"><i class="fa-solid fa-weight-hanging"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-qq-hoy">0.00</h3>
+                <p>QQ Comprados Hoy</p>
+              </div>
+            </div>
+            <div class="stat-card stat-orange">
+              <div class="stat-icon"><i class="fa-solid fa-box-archive"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-lotes-activos">0</h3>
+                <p>Lotes Activos</p>
+              </div>
+            </div>
+            <div class="stat-card stat-purple">
+              <div class="stat-icon"><i class="fa-solid fa-warehouse"></i></div>
+              <div class="stat-info">
+                <h3 id="stat-qq-inventario">0.00</h3>
+                <p>QQ en Inventario</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Últimas Compras</h3>
+                <button class="btn btn-sm btn-primary" data-page="compras">Ver todas</button>
+              </div>
+              <div class="card-body">
+                <div id="ultimas-compras-list" class="list-empty">
+                  <i class="fa-solid fa-inbox"></i>
+                  <p>No hay compras registradas</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Inventario por Calidad</h3>
+              </div>
+              <div class="card-body">
+                <div id="inventario-calidad-chart" class="chart-container"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-boxes-stacked"></i> Estado de Lotes</h3>
+              </div>
+              <div class="card-body">
+                <div id="lotes-estado-list" class="list-empty">
+                  <i class="fa-solid fa-inbox"></i>
+                  <p>No hay lotes activos</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-dollar-sign"></i> Resumen Semana</h3>
+              </div>
+              <div class="card-body">
+                <div id="resumen-semana" class="resumen-semana"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== COMPRAS ====== -->
+        <div id="page-compras" class="page hidden">
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-nueva-compra">
+              <i class="fa-solid fa-plus"></i> Nueva Compra
+            </button>
+            <div class="filter-bar">
+              <input type="date" id="filtro-fecha-compra" class="input-control" />
+              <select id="filtro-calidad-compra" class="input-control">
+                <option value="">Todas las calidades</option>
+                <option value="MIXCCN">MIXCCN</option>
+                <option value="MIXBN">MIXBN</option>
+                <option value="MIXAGRI">MIXAGRI</option>
+                <option value="CCNCOM">CCNCOM</option>
+                <option value="H-AGROCOCOA">H-AGROCOCOA</option>
+              </select>
+              <input type="text" id="filtro-proveedor-compra" class="input-control" placeholder="Buscar proveedor..." />
+              <button class="btn btn-secondary" id="btn-filtrar-compras">
+                <i class="fa-solid fa-filter"></i> Filtrar
+              </button>
+              <button class="btn btn-outline" id="btn-limpiar-filtros">
+                <i class="fa-solid fa-xmark"></i> Limpiar
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-list"></i> Registro de Compras</h3>
+              <div class="card-header-right">
+                <span id="compras-count" class="badge">0 registros</span>
+                <button class="btn btn-sm btn-success" id="btn-exportar-compras">
+                  <i class="fa-solid fa-file-excel"></i> Exportar
+                </button>
+              </div>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="data-table" id="tabla-compras">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Ticket</th>
+                    <th>Lote</th>
+                    <th>Proveedor</th>
+                    <th>Calidad</th>
+                    <th>QQ Baba</th>
+                    <th>QQ Seco</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-compras">
+                  <tr><td colspan="10" class="empty-row"><i class="fa-solid fa-inbox"></i> No hay datos</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer">
+              <div class="pagination" id="pagination-compras"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== LOTES ====== -->
+        <div id="page-lotes" class="page hidden">
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-nuevo-lote">
+              <i class="fa-solid fa-plus"></i> Nuevo Lote
+            </button>
+            <div class="filter-bar">
+              <select id="filtro-estado-lote" class="input-control">
+                <option value="">Todos los estados</option>
+                <option value="FERMENTACION">Fermentación</option>
+                <option value="SECADO">Secado</option>
+                <option value="BODEGA">Bodega</option>
+              </select>
+              <select id="filtro-tipo-lote" class="input-control">
+                <option value="">Todos los tipos</option>
+                <option value="MIXCCN">MIXCCN</option>
+                <option value="MIXBN">MIXBN</option>
+                <option value="MIXAGRI">MIXAGRI</option>
+                <option value="CCNCOM">CCNCOM</option>
+                <option value="H-AGROCOCOA">H-AGROCOCOA</option>
+              </select>
+              <button class="btn btn-secondary" id="btn-filtrar-lotes">
+                <i class="fa-solid fa-filter"></i> Filtrar
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-box-archive"></i> Control de Lotes</h3>
+              <span id="lotes-count" class="badge">0 lotes</span>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="data-table" id="tabla-lotes">
+                <thead>
+                  <tr>
+                    <th>Nombre/Lote</th>
+                    <th>Costo Total</th>
+                    <th>Vol. Baba (QQ)</th>
+                    <th>QQ Seco</th>
+                    <th>Vol. Real</th>
+                    <th>Estado</th>
+                    <th>P/G</th>
+                    <th>Saldo</th>
+                    <th>Perfil</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-lotes">
+                  <tr><td colspan="10" class="empty-row"><i class="fa-solid fa-inbox"></i> No hay lotes</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== INVENTARIO ====== -->
+        <div id="page-inventario" class="page hidden">
+          <div class="inventario-resumen">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Resumen de Inventario 2026</h3>
+                <button class="btn btn-sm btn-success" id="btn-exportar-inventario">
+                  <i class="fa-solid fa-file-excel"></i> Exportar
+                </button>
+              </div>
+              <div class="card-body">
+                <table class="data-table" id="tabla-resumen-inventario">
+                  <thead>
+                    <tr>
+                      <th>Detalle</th>
+                      <th>Calidad</th>
+                      <th>QQ</th>
+                      <th>Toneladas</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-resumen-inventario"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-boxes-stacked"></i> Lotes Procesados / En Recetas</h3>
+              </div>
+              <div class="card-body">
+                <table class="data-table" id="tabla-lotes-procesados">
+                  <thead>
+                    <tr>
+                      <th>Detalle</th>
+                      <th>Calidad</th>
+                      <th>QQ</th>
+                      <th>Toneladas</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-lotes-procesados"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-recycle"></i> Subproductos</h3>
+              </div>
+              <div class="card-body">
+                <table class="data-table" id="tabla-subproductos">
+                  <thead>
+                    <tr>
+                      <th>Detalle</th>
+                      <th>Calidad</th>
+                      <th>QQ</th>
+                      <th>Toneladas</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-subproductos"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card inventario-total-card">
+            <div class="card-body">
+              <div class="total-row">
+                <span class="total-label">TOTAL INVENTARIO PERFIL - FUMISA</span>
+                <span id="total-inventario-qq" class="total-value">0.00 QQ</span>
+                <span id="total-inventario-ton" class="total-value-sub">0.00 Ton</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== PROVEEDORES ====== -->
+        <div id="page-proveedores" class="page hidden">
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-nuevo-proveedor">
+              <i class="fa-solid fa-user-plus"></i> Nuevo Proveedor
+            </button>
+            <div class="filter-bar">
+              <input type="text" id="filtro-proveedor" class="input-control" placeholder="Buscar por nombre..." />
+              <button class="btn btn-secondary" id="btn-filtrar-prov">
+                <i class="fa-solid fa-filter"></i> Buscar
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-people-group"></i> Proveedores / Agricultores</h3>
+              <span id="proveedores-count" class="badge">0 proveedores</span>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="data-table" id="tabla-proveedores">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Total Compras</th>
+                    <th>QQ Baba</th>
+                    <th>QQ Seco</th>
+                    <th>Total Pagado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-proveedores">
+                  <tr><td colspan="7" class="empty-row"><i class="fa-solid fa-inbox"></i> No hay proveedores</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== REPORTES ====== -->
+        <div id="page-reportes" class="page hidden">
+          <div class="reportes-grid">
+            <div class="card reporte-card" data-reporte="compras-dia">
+              <div class="reporte-icon" style="background:#3b82f6"><i class="fa-solid fa-calendar-day"></i></div>
+              <h3>Compras por Día</h3>
+              <p>Detalle de compras por fecha específica</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+            <div class="card reporte-card" data-reporte="compras-semana">
+              <div class="reporte-icon" style="background:#10b981"><i class="fa-solid fa-calendar-week"></i></div>
+              <h3>Compras por Semana</h3>
+              <p>Resumen semanal de compras por lote</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+            <div class="card reporte-card" data-reporte="proveedor-historial">
+              <div class="reporte-icon" style="background:#f59e0b"><i class="fa-solid fa-user-clock"></i></div>
+              <h3>Historial por Proveedor</h3>
+              <p>Todas las compras de un agricultor</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+            <div class="card reporte-card" data-reporte="inventario-general">
+              <div class="reporte-icon" style="background:#8b5cf6"><i class="fa-solid fa-warehouse"></i></div>
+              <h3>Inventario General</h3>
+              <p>Estado actual de todos los lotes</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+            <div class="card reporte-card" data-reporte="lote-detalle">
+              <div class="reporte-icon" style="background:#ef4444"><i class="fa-solid fa-box"></i></div>
+              <h3>Detalle de Lote</h3>
+              <p>Todas las compras de un lote específico</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+            <div class="card reporte-card" data-reporte="resumen-calidad">
+              <div class="reporte-icon" style="background:#06b6d4"><i class="fa-solid fa-star"></i></div>
+              <h3>Resumen por Calidad</h3>
+              <p>Totales agrupados por tipo de calidad</p>
+              <button class="btn btn-primary btn-full">Generar</button>
+            </div>
+          </div>
+
+          <div id="reporte-resultado" class="card hidden">
+            <div class="card-header">
+              <h3 id="reporte-titulo"></h3>
+              <div class="card-header-right">
+                <button class="btn btn-sm btn-success" id="btn-imprimir-reporte">
+                  <i class="fa-solid fa-print"></i> Imprimir
+                </button>
+                <button class="btn btn-sm btn-success" id="btn-exportar-reporte">
+                  <i class="fa-solid fa-file-excel"></i> Exportar
+                </button>
+                <button class="btn btn-sm btn-outline" id="btn-cerrar-reporte">
+                  <i class="fa-solid fa-xmark"></i> Cerrar
+                </button>
+              </div>
+            </div>
+            <div class="card-body" id="reporte-contenido"></div>
+          </div>
+        </div>
+
+        <!-- ====== IMPORTAR ====== -->
+        <div id="page-importar" class="page hidden">
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-file-import"></i> Importar datos desde Excel</h3>
+            </div>
+            <div class="card-body">
+              <div class="import-info">
+                <div class="alert alert-info">
+                  <i class="fa-solid fa-circle-info"></i>
+                  <div>
+                    <strong>Instrucciones de importación:</strong>
+                    <ol>
+                      <li>Abre tu archivo <strong>INVENTARIO PERFIL 2026.xlsx</strong> en Excel</li>
+                      <li>Ve a la hoja <strong>DETALLE</strong></li>
+                      <li>Guarda el archivo como <strong>CSV (delimitado por comas)</strong></li>
+                      <li>Sube el archivo CSV aquí abajo</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              <div class="import-section">
+                <h4><i class="fa-solid fa-cart-shopping"></i> Importar Compras (hoja DETALLE)</h4>
+                <div class="file-drop-zone" id="drop-zone-compras">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <p>Arrastra el archivo CSV aquí o haz clic para seleccionar</p>
+                  <input type="file" id="file-compras" accept=".csv,.xlsx,.xls" class="file-input" />
+                  <button class="btn btn-outline" onclick="document.getElementById('file-compras').click()">
+                    <i class="fa-solid fa-folder-open"></i> Seleccionar archivo
+                  </button>
+                </div>
+                <div id="import-preview-compras" class="import-preview hidden"></div>
+                <button class="btn btn-primary hidden" id="btn-confirmar-import-compras">
+                  <i class="fa-solid fa-check"></i> Confirmar Importación
+                </button>
+              </div>
+
+              <hr class="section-divider" />
+
+              <div class="import-section">
+                <h4><i class="fa-solid fa-warehouse"></i> Importar Inventario (hoja INVENTARIO 2026)</h4>
+                <div class="file-drop-zone" id="drop-zone-inventario">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <p>Arrastra el archivo CSV aquí o haz clic para seleccionar</p>
+                  <input type="file" id="file-inventario" accept=".csv,.xlsx,.xls" class="file-input" />
+                  <button class="btn btn-outline" onclick="document.getElementById('file-inventario').click()">
+                    <i class="fa-solid fa-folder-open"></i> Seleccionar archivo
+                  </button>
+                </div>
+                <div id="import-preview-inventario" class="import-preview hidden"></div>
+                <button class="btn btn-primary hidden" id="btn-confirmar-import-inventario">
+                  <i class="fa-solid fa-check"></i> Confirmar Importación
+                </button>
+              </div>
+
+              <div id="import-log" class="import-log hidden">
+                <h4>Resultado de la importación:</h4>
+                <div id="import-log-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== USUARIOS (solo admin) ====== -->
+        <div id="page-usuarios" class="page hidden">
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-nuevo-usuario">
+              <i class="fa-solid fa-user-plus"></i> Nuevo Usuario
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-users-gear"></i> Gestión de Usuarios</h3>
+            </div>
+            <div class="card-body table-responsive">
+              <table class="data-table" id="tabla-usuarios">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-usuarios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-container -->
+    </main>
+  </div><!-- /app -->
+
+  <!-- ===== MODALES ===== -->
+
+  <!-- Modal Nueva Compra -->
+  <div id="modal-compra" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-compra-title"><i class="fa-solid fa-cart-plus"></i> Nueva Compra</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-compra">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Fecha *</label>
+              <input type="date" id="c-fecha" class="input-control" required />
+            </div>
+            <div class="form-group">
+              <label>N° Ticket *</label>
+              <input type="text" id="c-ticket" class="input-control" placeholder="Ej: P32381" required />
+            </div>
+            <div class="form-group">
+              <label>Calidad (Tipo) *</label>
+              <select id="c-calidad" class="input-control" required>
+                <option value="">Seleccionar...</option>
+                <option value="MIXCCN">MIXCCN</option>
+                <option value="MIXBN">MIXBN</option>
+                <option value="MIXAGRI">MIXAGRI</option>
+                <option value="CCNCOM">CCNCOM</option>
+                <option value="H-AGROCOCOA">H-AGROCOCOA</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Lote *</label>
+              <input type="text" id="c-lote" class="input-control" placeholder="Ej: MIXCCN-263401-C1" required />
+            </div>
+            <div class="form-group form-full">
+              <label>Proveedor *</label>
+              <input type="text" id="c-proveedor" class="input-control" list="proveedores-datalist" placeholder="Nombre del agricultor..." required />
+              <datalist id="proveedores-datalist"></datalist>
+            </div>
+            <div class="form-group">
+              <label>Reporte Calidad *</label>
+              <select id="c-reporte-calidad" class="input-control" required>
+                <option value="">Seleccionar...</option>
+                <option value="CCN AURORA PRO - C#1">CCN AURORA PRO - C#1</option>
+                <option value="CCN CALIDAD 1">CCN CALIDAD 1</option>
+                <option value="CCN CALIDAD 2">CCN CALIDAD 2</option>
+                <option value="NAC AURORA PRO - C#1">NAC AURORA PRO - C#1</option>
+                <option value="NACIONAL CALIDAD 1">NACIONAL CALIDAD 1</option>
+                <option value="NACIONAL CALIDAD 2">NACIONAL CALIDAD 2</option>
+                <option value="SEMISECO AURORA PRO C#1">SEMISECO AURORA PRO C#1</option>
+                <option value="CACAO SEMISECO">CACAO SEMISECO</option>
+                <option value="CACAO SEMISECO 2">CACAO SEMISECO 2</option>
+                <option value="CCN CALIDAD COM">CCN CALIDAD COM</option>
+                <option value="CACAO NATURAL PERFILADO">CACAO NATURAL PERFILADO</option>
+                <option value="MONILLA">MONILLA</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Calidad Odoo</label>
+              <input type="text" id="c-calidad-odoo" class="input-control" placeholder="[BBCCNCAL1]..." />
+            </div>
+            <div class="form-group">
+              <label>Año</label>
+              <input type="number" id="c-anio" class="input-control" value="26" />
+            </div>
+            <div class="form-group">
+              <label>Semana</label>
+              <input type="number" id="c-semana" class="input-control" placeholder="Ej: 34" />
+            </div>
+            <div class="form-group">
+              <label>Día</label>
+              <input type="number" id="c-dia" class="input-control" placeholder="1-7" min="1" max="7" />
+            </div>
+            <div class="form-group">
+              <label>QQ en Baba/Semiseco *</label>
+              <input type="number" id="c-qq-baba" class="input-control" step="0.01" placeholder="0.00" required />
+            </div>
+            <div class="form-group">
+              <label>QQ Seco *</label>
+              <input type="number" id="c-qq-seco" class="input-control" step="0.01" placeholder="0.00" required />
+            </div>
+            <div class="form-group">
+              <label>Peso en Ton</label>
+              <input type="number" id="c-ton" class="input-control" step="0.01" placeholder="0.00" readonly />
+            </div>
+            <div class="form-group">
+              <label>Precio *</label>
+              <input type="number" id="c-precio" class="input-control" step="0.01" placeholder="0.00" required />
+            </div>
+            <div class="form-group">
+              <label>Total Pagado</label>
+              <input type="number" id="c-total" class="input-control" step="0.01" placeholder="0.00" readonly />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-guardar-compra">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Lote -->
+  <div id="modal-lote" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-lote-title"><i class="fa-solid fa-box-archive"></i> Nuevo Lote</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-lote">
+          <div class="form-group">
+            <label>Nombre/Lote *</label>
+            <input type="text" id="l-nombre" class="input-control" placeholder="Ej: MIXCCN-263401-C1" required />
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Costo Total de Compra</label>
+              <input type="number" id="l-costo" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Vol. Compra Baba/Semiseco</label>
+              <input type="number" id="l-vol-baba" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Vol. Compra QQ Seco</label>
+              <input type="number" id="l-vol-seco" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Vol. Real del Proceso</label>
+              <input type="number" id="l-vol-real" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Estado *</label>
+              <select id="l-estado" class="input-control" required>
+                <option value="FERMENTACION">Fermentación</option>
+                <option value="SECADO">Secado</option>
+                <option value="BODEGA">Bodega</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Pérd./Ganancia</label>
+              <select id="l-pg" class="input-control">
+                <option value="GANANCIA">Ganancia</option>
+                <option value="PERDIDA">Pérdida</option>
+                <option value="IGUAL">Igual</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Salida</label>
+              <input type="number" id="l-salida" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Saldo</label>
+              <input type="number" id="l-saldo" class="input-control" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group form-full">
+              <label>Perfil de Calidad</label>
+              <select id="l-perfil" class="input-control">
+                <option value="PERFIL">PERFIL</option>
+                <option value="BASE">BASE</option>
+                <option value="EN PROCESO">EN PROCESO</option>
+                <option value="RECHAZADO PARA CONVENCIONAL">RECHAZADO PARA CONVENCIONAL</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-guardar-lote">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Proveedor -->
+  <div id="modal-proveedor" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus"></i> Nuevo Proveedor</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-proveedor">
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" id="p-nombre" class="input-control" placeholder="Apellidos Nombres" required />
+          </div>
+          <div class="form-group">
+            <label>Cédula / RUC</label>
+            <input type="text" id="p-cedula" class="input-control" placeholder="0000000000" />
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" id="p-telefono" class="input-control" placeholder="0999999999" />
+          </div>
+          <div class="form-group">
+            <label>Sector / Zona</label>
+            <input type="text" id="p-zona" class="input-control" placeholder="Zona o sector de la finca" />
+          </div>
+          <div class="form-group">
+            <label>Observaciones</label>
+            <textarea id="p-obs" class="input-control" rows="3" placeholder="Notas adicionales..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-guardar-proveedor">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Usuario -->
+  <div id="modal-usuario" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus"></i> Nuevo Usuario</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-usuario">
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" id="u-nombre" class="input-control" required />
+          </div>
+          <div class="form-group">
+            <label>Usuario *</label>
+            <input type="text" id="u-usuario" class="input-control" required />
+          </div>
+          <div class="form-group">
+            <label>Contraseña *</label>
+            <input type="password" id="u-password" class="input-control" required />
+          </div>
+          <div class="form-group">
+            <label>Rol *</label>
+            <select id="u-rol" class="input-control" required>
+              <option value="operador">Operador</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close-btn">Cancelar</button>
+        <button class="btn btn-primary" id="btn-guardar-usuario">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación -->
+  <div id="modal-confirm" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog modal-sm">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Confirmar acción</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message">¿Estás seguro de realizar esta acción?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close-btn">Cancelar</button>
+        <button class="btn btn-danger" id="btn-confirm-ok">
+          <i class="fa-solid fa-check"></i> Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/proveedores.js"></script>
+  <script src="js/compras.js"></script>
+  <script src="js/lotes.js"></script>
+  <script src="js/reportes.js"></script>
+  <script src="js/importar.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
+
